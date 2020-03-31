@@ -1,0 +1,104 @@
+# ------------------------ Graphql ------------------------
+
+type Query {
+  user(id: ID!): User
+  users: [User]
+
+  #### PERMISSION
+  permissions: [Permission]
+
+  #### ROLE
+  roles: [Role]
+  role(roleId: String!): Role
+}
+
+type Mutation {
+  #### USER
+  createUser(input: UserCreateInput!): User
+  login(username: String!, password: String!): LoginResponse
+  updateUser(userId: String!, input: UserUpdateInput!): Boolean
+  updateUserByAdmin(userId: String!, input: UserUpdateInputByAdmin!): Boolean
+  deleteUser(userId: String!): Boolean
+
+  #### PERMISSION
+  createPermission(input: PermissionInput!): Permission
+  updatePermission(permissionId: String!, input: PermissionInput!): Permission
+  deletePermission(permissionId: String!): Boolean
+
+  #### ROLE
+  createRole(input: RoleInput!): Role
+  updateRole(roleId: String!, input: RoleInput!): Role
+  deleteRole(roleId: String!): Boolean
+
+  #### UTILS
+  restoreDB(label: String!): Boolean
+  backupDB(label: String!): Boolean
+  dropDB(pass: String!): Boolean
+}
+
+# ------------------------ Entity ------------------------
+
+type User {
+  _id: ID
+  username: String
+  email: String
+  name: String
+  createdAt: Float
+
+  role: Role
+  isActive: Boolean
+}
+
+type Permission {
+  _id: ID
+  code: String
+  name: String
+}
+
+type Role {
+  _id: ID
+  code: String
+  name: String
+  permissions: [Permission]
+}
+
+# ------------------------ Input ------------------------
+
+input UserCreateInput {
+  username: String!
+  password: String!
+  email: String!
+  name: String!
+  roleId: String!
+}
+
+input UserUpdateInput {
+  currentPassword: String
+  newPassword: String
+  email: String
+  name: String
+  roleId: String
+}
+
+input UserUpdateInputByAdmin {
+  newPassword: String
+  email: String
+  name: String
+  roleId: String
+}
+
+input PermissionInput {
+  code: String!
+  name: String!
+}
+
+input RoleInput {
+  code: String!
+  name: String!
+  permissions: [String!]!
+}
+
+# ------------------------ Response ------------------------
+type LoginResponse {
+  token: String
+}
